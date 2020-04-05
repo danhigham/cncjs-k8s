@@ -1,0 +1,24 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  annotations:
+    certmanager.k8s.io/cluster-issuer: letsencrypt-prod
+    kubernetes.io/ingress.class: nginx
+    kubernetes.io/tls-acme: "true"
+    nginx.org/websocket-services: "cncjs-http"
+  labels:
+    app: cncjs
+  name: cncjs
+  namespace: cncjs
+spec:
+  rules:
+  - host: cnc.high.am
+    http:
+      paths:
+      - backend:
+          serviceName: cncjs-http
+          servicePort: 8000
+  tls:
+  - hosts:
+    - cnc.high.am
+    secretName: cncjs-tls

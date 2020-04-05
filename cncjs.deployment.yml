@@ -1,0 +1,39 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cncjs-deployment
+  labels:
+    app: cncjs
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: cncjs
+  template:
+    metadata:
+      labels:
+        app: cncjs
+    spec:
+      volumes:
+      - name: supervisord-conf-vol
+        configMap:
+          name: supervisord-config
+      containers:
+      - name: cncjs
+        image: harbor.high.am/cncjs/cncjs:latest
+        securityContext:
+          runAsUser: 0
+        command: ["supervisord"]
+        ports:
+        - containerPort: 8000
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 8000
+          initialDelaySeconds: 3
+          periodSeconds: 3
+        volumeMounts:
+          - name: supervisord-conf-vol
+            mountPath: /etc/supervisor.d
+            readOnly: true

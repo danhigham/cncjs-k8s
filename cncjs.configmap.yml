@@ -1,0 +1,21 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: supervisord-config
+  namespace: cncjs
+data:
+  cncjs.ini: |
+    [supervisord]
+    nodaemon=true
+
+    [program:cncjs]
+    #user=node
+    startsecs = 120
+    autorestart = true
+    command=cncjs -vvv
+    
+    [program:socat]
+    user=root
+    startsecs = 120
+    autorestart = true
+    command=socat pty,link=/dev/ttyS10,waitslave tcp:192.168.1.207:2000
